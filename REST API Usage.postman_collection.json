@@ -1,0 +1,650 @@
+{
+	"variables": [],
+	"info": {
+		"name": "REST API Usage",
+		"_postman_id": "708a216b-4568-7e31-bf57-9f35425d4786",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Confirm 30 gists",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Check for 30 gists\"] = jsonData.length === 30;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {},
+				"description": "Check for 30 values"
+			},
+			"response": []
+		},
+		{
+			"name": "Check for 1 public repo for wolfordj",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Body matches string for true public gist\"] = responseBody.includes('\"public\":true');",
+							"",
+							"",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/users/wolfordj/gists",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Check for 1 public gist"
+			},
+			"response": []
+		},
+		{
+			"name": "Getting initial gists count",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Get initial gists count to confirm addition of 1\"] = jsonData.length !== null;",
+							"postman.setEnvironmentVariable(\"Before\", jsonData.length);",
+							"console.log(postman.getEnvironmentVariable(\"Before\"));"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Add gist and confirm +1 to gist count",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Gist successfully added\"] = responseCode.code === 201;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"the description for this gist\",\n  \"public\": true,\n  \"files\": {\n    \"file1.txt\": {\n      \"content\": \"String file contents\"\n    }\n  }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Checking for +1 count",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"After\", jsonData.length);",
+							"var initial = postman.getEnvironmentVariable(\"Before\");",
+							"var final = Number(postman.getEnvironmentVariable(\"After\"));",
+							"initial = Number(initial) + 1;",
+							"console.log(\"the after variable is found to be \");",
+							"console.log(postman.getEnvironmentVariable(\"After\"));",
+							"console.log(\"the before variable is found to be \");",
+							"console.log(postman.getEnvironmentVariable(\"Before\"));",
+							"console.log(\"initial is now\");",
+							"console.log(initial);",
+							"tests[\"Get gists count after creating one more gist\"] = initial === final;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Add gist to confirm content is correct",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 201\"] = responseCode.code === 201;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 1329d309f451d504caba3fa104c6fa7d0be39dbb",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"I'm going to be looking for this sentence as the first gist\",\n  \"public\": true,\n  \"files\": {\n    \"file1.txt\": {\n      \"content\": \"String file contents\"\n    }\n  }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Look for matching description in most recent gist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"console.log(jsonData[0]);",
+							"var bool = false;",
+							"if (jsonData[0][\"description\"] === \"I'm going to be looking for this sentence as the first gist\") {",
+							"    bool = true;",
+							"}",
+							"tests[\"Looking for the correct description in most recent gist\"] = bool === true; "
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 1329d309f451d504caba3fa104c6fa7d0be39dbb",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Capturing most recent gist to confirm edit works",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"var id = jsonData[0][\"id\"];",
+							"var description = jsonData[0][\"description\"];",
+							"postman.setEnvironmentVariable(\"EditingID\", id);",
+							"postman.setEnvironmentVariable(\"EditingBeforeDescriptor\", id);",
+							"console.log(postman.getEnvironmentVariable(\"EditingID\"));",
+							"tests[\"id and description of gist to be edited captured\"] = id !== null; "
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Use Patch to actually edit the gist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200 after editing\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists/{{EditingID}}",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"EDITED\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm the edited content appears in the gist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var jsonData = JSON.parse(responseBody);",
+							"var description = jsonData[\"description\"];",
+							"console.log(description);",
+							"tests[\"Edited content appears in gist with proper ID\"] = description === \"EDITED\";",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists/{{EditingID}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Adding gist with no star",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 201 adding for Starred gists\"] = responseCode.code === 201;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"I'm going to be used to confirm Starred gists\",\n  \"public\": true,\n  \"files\": {\n    \"file1.txt\": {\n      \"content\": \"String file contents\"\n    }\n  }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Capture id for gist to Star",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200 to retrieve Starring ID\"] = responseCode.code === 200;",
+							"var jsonData = JSON.parse(responseBody);",
+							"var id = jsonData[0][\"id\"];",
+							"postman.setEnvironmentVariable(\"StarringID\", id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Star the gist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 204 with successful star\"] = responseCode.code === 204;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists/{{StarringID}}/star",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Length",
+						"value": "0",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm Endpoint for a starred gist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 204 since star has been added\"] = responseCode.code === 204;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists/{{StarringID}}/star",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Capture starred gist count before deletion",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200 for retrieving list of starred\"] = responseCode.code === 200;",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"StarredBefore\", jsonData.length)",
+							"console.log(jsonData.length);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists/starred",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Remove a star",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 204 for unstarring\"] = responseCode.code === 204;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists/{{StarringID}}/star",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm starred list loses one",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"var before = Number(postman.getEnvironmentVariable(\"StarredBefore\"));",
+							"var after = Number(jsonData.length);",
+							"var after = after + 1;",
+							"tests[\"Starred list count correct after deletion\"] = before === after;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists/starred",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count of user gists before deleting 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200 for list count pre-deletion\"] = responseCode.code === 200;",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"DeletionCount\", jsonData.length);",
+							"postman.setEnvironmentVariable(\"DeletionID\", jsonData[0][\"id\"]);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Gist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 204 for successful delete\"] = responseCode.code === 204;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists/{{DeletionID}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm gist list went down by 1 after deletion",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200 for list count post-deletion\"] = responseCode.code === 200;",
+							"var jsonData = JSON.parse(responseBody);",
+							"var after = Number(jsonData.length);",
+							"var before = Number(postman.getEnvironmentVariable(\"DeletionCount\"));",
+							"after = after + 1;",
+							"tests[\"Gist count should be one fewer\"] = after === before;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://api.github.com/gists",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{oAuthToken}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
